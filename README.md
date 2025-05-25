@@ -1,5 +1,29 @@
 # Added multiple search engines
 
+TO DO:
+
+- hackernews: ## SORT BY DATE AND GET THE LATEST NEWS!!!!!!!
+- deviantart:# TRY SEEING IF I CAN EXTRACT MORE!
+
+TO ADD:
+
+- astrophysics data system
+- dailymotion
+- youtube [low piroity]
+- google scholar
+- google images
+- google news
+  [movie reviews]
+- rotten tomatos
+- imbd
+- yelp [business reviews] -NOT THERE
+- steam [gaming]
+- [resturant reviews]
+- pinterest [MAYBE]
+- stack exchange
+- unsplash
+- apple maps or some maps of some kind !!!!!!!!!!
+
 EXAMPLES:
 
 - books about grief --> good reads (books)
