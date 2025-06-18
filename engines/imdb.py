@@ -7,7 +7,6 @@ IMDB_SUGGESTION_URL = "https://v2.sg.media-imdb.com/suggestion/{letter}/{query}.
 IMDB_HREF_BASE = "https://imdb.com/{category}/{entry_id}"
 SEARCH_CATEGORIES = {"nm": "name", "tt": "title", "kw": "keyword", "co": "company", "ep": "episode"}
 
-
 def search_imdb(query):
     query_key = query.replace(" ", "_").lower()
     url = IMDB_SUGGESTION_URL.format(letter=query_key[0], query=query_key)
@@ -49,12 +48,13 @@ def search_imdb(query):
                 magic = 'QL75_UX280_CR0,0,280,414_'
             image_url = image_url_name + magic + '.' + image_url_ext
 
-        results.append({
-            "title": title,
-            "url": IMDB_HREF_BASE.format(category=category, entry_id=entry_id),
-            "content": content.strip(" |"),
-            "thumbnail": image_url
-        })
+        # results.append({
+        #     "title": title,
+        #     "url": IMDB_HREF_BASE.format(category=category, entry_id=entry_id),
+        #     "content": content.strip(" |"),
+        #     "thumbnail": image_url
+        # })
+        results.append(IMDB_HREF_BASE.format(category=category, entry_id=entry_id))
 
     return results
 
@@ -62,8 +62,13 @@ def search_imdb(query):
 if __name__ == "__main__":
     query = "oppenheimer"
     results = search_imdb(query)
-    for i, r in enumerate(results, 1):
-        print(f"{i}. {r['title']}\n   {r['url']}\n   {r['content']}")
-        if r.get("thumbnail"):
-            print(f"   Thumbnail: {r['thumbnail']}")
-        print()
+    print(results)
+    # for i, r in enumerate(results, 1):
+    #     print(f"{i}. {r['title']}\n   {r['url']}\n   {r['content']}")
+    #     if r.get("thumbnail"):
+    #         print(f"   Thumbnail: {r['thumbnail']}")
+    #     print()
+
+# search entities
+# use jina to scrape urls
+# LATER CAN EXTRACT THUMBNAILS

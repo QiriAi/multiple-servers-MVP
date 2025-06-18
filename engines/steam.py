@@ -1,4 +1,3 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
 """Steam (store) chatbot integration script."""
 
 import requests
@@ -46,9 +45,15 @@ def search_steam_store(query, cc="us", lang="en"):
 
 
 if __name__ == "__main__":
+    #query = "tell me about stardew valley"
     query = "stardew valley"
     results = search_steam_store(query)
-    for i, r in enumerate(results, 1):
-        print(f"{i}. {r['title']}\n   {r['url']}\n   Price: {r['price']} | Platforms: {r['platforms']}\n")
+    print(results)
+    #for i, r in enumerate(results, 1):
+    #    print(f"{i}. {r['title']}\n   {r['url']}\n   Price: {r['price']} | Platforms: {r['platforms']}\n")
 
 # "farming games" doesn't work --> need specific game titles
+
+    # entity search only
+    # returns price, title, url, platforms
+    # just ingest as is don't use jina ai

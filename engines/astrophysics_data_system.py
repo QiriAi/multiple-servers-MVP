@@ -1,3 +1,7 @@
+"""
+Doesn't connect to the papers only gives extracts 
+
+"""
 import requests
 from datetime import datetime
 from urllib.parse import urlencode
@@ -10,7 +14,7 @@ ADS_API_KEY = os.getenv("HARVARD_ADS_API_KEY")
 ADS_BASE_URL = "https://api.adsabs.harvard.edu/v1/search/query"
 ADS_UI_BASE_URL = "https://ui.adsabs.harvard.edu/abs/"
 
-def search_ads(query, rows=10, page=1):
+def search_ads(query, rows=5, page=1):
     headers = {
         "Authorization": f"Bearer {ADS_API_KEY}",
     }
@@ -48,25 +52,33 @@ def search_ads(query, rows=10, page=1):
         except ValueError:
             date = ""
 
-        results.append({
-            "title": title,
-            "url": url,
-            "author": author,
-            "abstract": abstract,
-            "doi": doi,
-            "publishedDate": date
-        })
+        # results.append({
+        #     "title": title,
+        #     "url": url,
+        #     "author": author,
+        #     "abstract": abstract,
+        #     "doi": doi,
+        #     "publishedDate": date
+        # })
+        results.append(url)
 
     return results
 
 if __name__ == "__main__":
-    query = "black hole accretion"
+    #query = "black hole accretion"
+    query = "pluto"
     papers = search_ads(query)
-    for i, paper in enumerate(papers, 1):
-        print(f"{i}. {paper['title']}")
-        print(f"   Author: {paper['author']}")
-        print(f"   Date: {paper['publishedDate']}")
-        print(f"   DOI: {paper['doi']}")
-        print(f"   URL: {paper['url']}")
-        print(f"   Abstract: {paper['abstract'][:300]}...\n")
+    print(papers)
+    # for i, paper in enumerate(papers, 1):
+    #     print(f"{i}. {paper['title']}")
+    #     print(f"   Author: {paper['author']}")
+    #     print(f"   Date: {paper['publishedDate']}")
+    #     print(f"   DOI: {paper['doi']}")
+    #     print(f"   URL: {paper['url']}")
+    #     print(f"   Abstract: {paper['abstract'][:300]}...\n")
 
+# search in entities
+# for now in mvp take urls and jina to scrape abstracts
+
+# LATER AFTER MVP
+# don't scrape returns multiple results and abstracts 

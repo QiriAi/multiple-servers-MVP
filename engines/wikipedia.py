@@ -10,32 +10,32 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (compatible; wikibot/1.0)"
 }
 
-def search_wikipedia(query):
-    title = quote(query.strip().title())  # Wikipedia titles are capitalized
-    url = WIKI_API + title
+def search_wikipedia(query, limit=5):
+    search_url = f"https://en.wikipedia.org/w/api.php"
+    params = {
+        "action": "query",
+        "list": "search",
+        "srsearch": query,
+        "format": "json",
+        "srlimit": limit,
+    }
 
     try:
-        resp = requests.get(url, headers=HEADERS)
-        if resp.status_code == 404:
-            print("❌ No Wikipedia article found.")
-            return []
-
-        data = resp.json()
+        resp = requests.get(search_url, params=params, headers=HEADERS)
+        results = resp.json().get("query", {}).get("search", [])
     except Exception as e:
         print("❌ Wikipedia API error:", e)
         return []
 
-    if data.get("type") not in ["standard", "article"]:
-        return []
-
-    return [{
-        "title": data.get("title", query),
-        "url": data.get("content_urls", {}).get("desktop", {}).get("page", BASE_URL + title),
-        "snippet": data.get("extract", "No summary available."),
-        "source": "Wikipedia"
-    }]
+    return [
+        f"https://en.wikipedia.org/wiki/{quote(result['title'].replace(' ', '_'))}"
+        for result in results
+    ]
 
 if __name__ == "__main__":
-    results = search_wikipedia("Alan Turing")
-    for r in results:
-        print(f"{r['title']}\n{r['url']}\n{r['snippet']}\n")
+    results = search_wikipedia("what should i do if i have high blood sugar")
+    print(results)
+    
+    # this works with full queries
+    # gets web urls from the output
+    # use jina ai to extract content afterwards

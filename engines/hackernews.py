@@ -44,14 +44,15 @@ def search_hackernews(query: str, time_range: str = None, page: int = 1):
             comments = hit.get("num_comments", 0)
             metadata = f"points: {points} | comments: {comments}" if points or comments else ""
 
-            results.append({
-                "title": hit.get("title") or f"author: {hit.get('author')}",
-                "url": f"https://news.ycombinator.com/item?id={object_id}",
-                "content": hit.get("url") or hit.get("comment_text") or hit.get("story_text") or "",
-                "author": hit.get("author"),
-                "metadata": metadata,
-                "publishedDate": datetime.fromtimestamp(hit.get("created_at_i")),
-            })
+            # results.append({
+            #     "title": hit.get("title") or f"author: {hit.get('author')}",
+            #     "url": f"https://news.ycombinator.com/item?id={object_id}",
+            #     "content": hit.get("url") or hit.get("comment_text") or hit.get("story_text") or "",
+            #     "author": hit.get("author"),
+            #     "metadata": metadata,
+            #     "publishedDate": datetime.fromtimestamp(hit.get("created_at_i")),
+            # })
+            results.append(f"https://news.ycombinator.com/item?id={object_id}")
 
         return results
 
@@ -60,9 +61,15 @@ def search_hackernews(query: str, time_range: str = None, page: int = 1):
         return []
 
 if __name__ == "__main__":
-    results = search_hackernews("OpenAI")
-    for i, r in enumerate(results, 1):
-        print(f"{i}. {r['title']} by {r['author']}")
-        print(f"   {r['url']}")
-        print(f"   {r['metadata']}")
-        print(f"   {r['content'][:120]}...\n")
+    #results = search_hackernews("can you please explain what is langchain?")
+    results = search_hackernews("langchain")
+    # for i, r in enumerate(results, 1):
+    #     print(f"{i}. {r['title']} by {r['author']}")
+    #     print(f"   {r['url']}")
+    #     print(f"   {r['metadata']}")
+    #     print(f"   {r['content'][:120]}...\n")
+    print(results)
+# for now 
+# search entities 
+# get urls and use jina to scrape
+# to do later not in MVP change to pull most relevant + latest results!

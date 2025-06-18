@@ -1,6 +1,3 @@
-# SPDX-License-Identifier: AGPL-3.0-or-later
-"""GitHub Repository Search for Chatbot"""
-
 import requests
 from urllib.parse import urlencode
 from dateutil import parser
@@ -40,15 +37,17 @@ def search_github_repos(query, max_results=5):
 
     return results
 
-
-# Test mode
 if __name__ == "__main__":
     query = "langchain"
     results = search_github_repos(query)
-    if not results:
-        print("No results found.")
-    else:
-        for i, r in enumerate(results, 1):
-            print(f"{i}. {r['title']} ({r['published']})")
-            print(f"   {r['url']}")
-            print(f"   {r['snippet']}\n")
+    print(results)
+    # if not results:
+    #     print("No results found.")
+    # else:
+    #     for i, r in enumerate(results, 1):
+    #         print(f"{i}. {r['title']} ({r['published']})")
+    #         print(f"   {r['url']}")
+    #         print(f"   {r['snippet']}\n")
+
+# use entities
+# don't scrape

@@ -51,14 +51,15 @@ def parse_goodreads(response_text):
             thumb_elem = row.xpath(".//img[contains(@class, 'bookCover')]/@src")
             info_elem = row.xpath(".//span[contains(@class, 'minirating')]/text()")
 
-            results.append({
-                "title": title_elem[0].strip() if title_elem else None,
-                "author": author_elem[0].strip() if author_elem else None,
-                "url": "https://www.goodreads.com" + url_elem[0] if url_elem else None,
-                "thumbnail": thumb_elem[0] if thumb_elem else None,
-                "snippet": info_elem[0].strip() if info_elem else "",
-                "source": "Goodreads"
-            })
+            # results.append({
+            #     "title": title_elem[0].strip() if title_elem else None,
+            #     "author": author_elem[0].strip() if author_elem else None,
+            #     "url": "https://www.goodreads.com" + url_elem[0] if url_elem else None,
+            #     "thumbnail": thumb_elem[0] if thumb_elem else None,
+            #     "snippet": info_elem[0].strip() if info_elem else "",
+            #     "source": "Goodreads"
+            # })
+            results.append("https://www.goodreads.com" + url_elem[0] if url_elem else None)
         except Exception:
             continue  # Skip malformed rows
 
@@ -67,27 +68,31 @@ def parse_goodreads(response_text):
 # --- WRAPPER FUNCTION ---
 def search_goodreads(query, page=1):
     url = request_goodreads(query, page)
-    print(f"🔍 Requesting: {url}")  # log URL
+    #print(f"🔍 Requesting: {url}")  # log URL
 
     resp = requests.get(url, headers=HEADERS)
-    print(f"✅ Status: {resp.status_code}")
+    #print(f"✅ Status: {resp.status_code}")
 
     if resp.status_code != 200:
         print("❌ Request failed")
         return []
 
     # Check what the HTML looks like
-    print("🧾 HTML Preview:", resp.text[:500])
+   # print("🧾 HTML Preview:", resp.text[:500])
 
     results = parse_goodreads(resp.text)
-    print(f"📦 Parsed {len(results)} results")
+    #print(f"📦 Parsed {len(results)} results")
     return results
 
 if __name__ == "__main__":
     results = search_goodreads("books about dogs")
+    print(results)
 
-    if not results:
-        print("No results found.")
+    # if not results:
+    #     print("No results found.")
 
-    for r in results:
-        print(f"{r['title']} by {r['author']}\n{r['url']}\n")
+    # for r in results:
+    #     print(f"{r['title']} by {r['author']}\n{r['url']}\n")
+
+# search in entities
+# receive url + jina

@@ -1,5 +1,3 @@
-# engines/reddit.py
-
 import requests
 from datetime import datetime
 from urllib.parse import urlencode, urljoin
@@ -27,24 +25,34 @@ def search_reddit(query, limit=10):
     for post in posts:
         post_data = post["data"]
         url = urljoin(REDDIT_BASE_URL, post_data["permalink"])
-        title = post_data.get("title", "Untitled")
-        text = post_data.get("selftext", "")
-        if len(text) > 500:
-            text = text[:500] + "..."
-        created_utc = post_data.get("created_utc")
-        published = datetime.utcfromtimestamp(created_utc).strftime('%Y-%m-%d') if created_utc else None
+        # title = post_data.get("title", "Untitled")
+        # text = post_data.get("selftext", "")
+        # if len(text) > 500:
+        #     text = text[:500] + "..."
+        # created_utc = post_data.get("created_utc")
+        # published = datetime.utcfromtimestamp(created_utc).strftime('%Y-%m-%d') if created_utc else None
 
-        results.append({
-            "title": title,
-            "url": url,
-            "snippet": text if text else "[No text content]",
-            "published": published,
-            "source": "Reddit"
-        })
+        # results.append({
+        #     "title": title,
+        #     "url": url,
+        #     "snippet": text if text else "[No text content]",
+        #     "published": published,
+        #     "source": "Reddit"
+        # })
+
+        results.append(url)
 
     return results
 
 if __name__ == "__main__":
-    results = search_reddit("anxiety coping tips")
-    for r in results:
-        print(f"{r['title']} ({r['published']})\n{r['url']}\n{r['snippet']}\n")
+    #results = search_reddit("anxiety coping tips")
+    #results = search_reddit("how to deal with anxiety")
+    #results = search_reddit("my blood sugar is so high how do I deal with this")
+    results = search_reddit("high blood sugar")
+    # for r in results:
+    #     print(f"{r['title']} ({r['published']})\n{r['url']}\n{r['snippet']}\n")
+    print(results)
+
+    # entity search
+    # returns web pages
+    # use jina api to scrape
