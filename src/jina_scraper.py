@@ -10,7 +10,8 @@ model = genai.GenerativeModel("gemini-2.0-flash")
 
 api_key = os.getenv("JINA_API_KEY")
 headers = {
-    "Authorization": api_key
+    "Authorization": api_key, # has bearer prefix
+    "X-Md-Link-Style": "discarded"
 }
 
 def jina(url:str):
