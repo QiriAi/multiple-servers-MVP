@@ -10,6 +10,7 @@ import json
 from jina_scraper import jina
 from engines.google import get_google_urls
 from engines.deviantart import search_deviantart
+from engines.google_images import google_image_search
 
 load_dotenv()
 
@@ -17,7 +18,7 @@ class SearchBot:
     ENGINES_USE_SUBQUESTIONS = {"google", "wikipedia"}
     ENGINES_USE_ENTITIES = {"arxiv", "astrophysics_data_system", "goodreads", "hackernews","imdb", "reddit"}
     ENGINES_USE_ENTITIES_NO_SCRAPING = {"github", "huggingface", "openstreetmap", "steam"}
-    IMAGE_ENGINES = {"deviantart"}
+    IMAGE_ENGINES = {"deviantart", "google_images"}
 
     def __init__(self, model="gemini-2.0-flash"):
         self.client = OpenAI(
@@ -92,10 +93,19 @@ class SearchBot:
             })
         return info
     
-    def _use_additional_engines(self, selected_engines, sub_questions, entity_dic, top_n=3):
+    def _use_additional_engines(self, selected_engines, sub_questions, entity_dic, top_n=2):
         info = []
-        # Get top entities
-        top_entities = sorted(entity_dic.items(), key=lambda x: x[1], reverse=True)[:top_n]
+        # Sort entities by count, descending
+        sorted_entities = sorted(entity_dic.items(), key=lambda x: x[1], reverse=True)
+
+        # Filter out entities with count <= 1 and then take top_n
+        top_entities = [(entity, count) for entity, count in sorted_entities if count > 1][:top_n]
+
+        # Fallback: if nothing passed the filter, just take 1 without filtering
+        if not top_entities:
+            top_entities = sorted_entities[:1]
+
+        # Extract just the entity names
         top_entity_names = [entity for entity, count in top_entities]
 
         for engine in selected_engines:
@@ -131,13 +141,25 @@ class SearchBot:
                         })                     
         return info
     
-    def _get_images(self, entity_dic, top_n=3):
+    def _get_images(self, entity_dic, top_n=2, top_images = 3):
         # Get top entities
-        top_entities = sorted(entity_dic.items(), key=lambda x: x[1], reverse=True)[:top_n]
+        # Sort entities by count, descending
+        sorted_entities = sorted(entity_dic.items(), key=lambda x: x[1], reverse=True)
+
+        # Filter out entities with count <= 1 and then take top_n
+        top_entities = [(entity, count) for entity, count in sorted_entities if count > 1][:top_n]
+
+        # Fallback: if nothing passed the filter, just take 1 without filtering
+        if not top_entities:
+            top_entities = sorted_entities[:1]
+
+        # Extract just the entity names
         top_entity_names = [entity for entity, count in top_entities]
+        outputs = []
 
         for entity in top_entity_names:
-            outputs = search_deviantart(entity)
+            outputs += search_deviantart(entity)[:top_images] # append top 3 (default)
+            outputs += google_image_search(entity)[:top_images] # append top 3 (default)
         return outputs
 
     def _check_tokens(self, data: list):
@@ -195,8 +217,8 @@ if __name__ == "__main__":
     #query = "Explain the process of photosynthesis in plants and how it relates to climate change, including the role of carbon dioxide."
     #query = "Tell me about langchain"
     #query = "What is a black hole?"
-    query = "Best romantic movies"
-    #query = "What is the cutest cat for me to buy?"
+    #query = "Best romantic movies"
+    query = "What is the cutest cat for me to buy?"
     bot.main(query)
 
 # FIGURE OUT LATER

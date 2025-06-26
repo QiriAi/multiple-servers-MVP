@@ -51,6 +51,7 @@ def search_deviantart(query, page=1):
             #"artist": artist,
             "url": full_url,
             "thumbnail": thumbnail,
+            "engine": "deviantart"
             # "text": (
             #     f"Title: {title}\n"
             #     f"Artist: {artist}\n"
