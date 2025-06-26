@@ -19,11 +19,11 @@ bot = SearchBot()
 class QueryRequest(BaseModel):
     query: str
 
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+api_key_scheme = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
-def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
-    if api_key_header == API_KEY:
-        return api_key_header
+def get_api_key(api_key: str = Security(api_key_scheme)) -> str:
+    if api_key == API_KEY:
+        return api_key
     else:
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
