@@ -7,7 +7,7 @@ from src.engine_loader import SEARCH_ENGINES
 from src.llm_prompt_analyser import decompose_prompt
 import google.generativeai as genai
 import json
-from jina_scraper import jina
+from src.jina_scraper import jina
 from engines.google import get_google_urls
 from engines.deviantart import search_deviantart
 from engines.google_images import google_image_search
@@ -202,13 +202,15 @@ class SearchBot:
             "images": image_urls, 
             "tokens": self._check_tokens(all_info)
         }
-        # Generate a timestamped filename
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"output/context_and_citation_{timestamp}.json"
 
-        # Save the file
-        with open(filename, "w", encoding="utf-8") as f:
-            json.dump(final_result, f, indent=2)
+        return final_result
+        # # Generate a timestamped filename
+        # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        # filename = f"output/context_and_citation_{timestamp}.json"
+
+        # # Save the file
+        # with open(filename, "w", encoding="utf-8") as f:
+        #     json.dump(final_result, f, indent=2)
         #return num_results, engines, tags, entity_dic, sub_questions
 
 # Test the bot
