@@ -241,7 +241,8 @@ class SearchBot:
 
         # 6. Count tokens
         t0 = time.perf_counter()
-        tokens = self._check_tokens(info)
+        #tokens = self._check_tokens(info)
+        tokens = "NOT IMPLEMENTED"
         latency["token_check"] = time.perf_counter() - t0
 
         # Total time
