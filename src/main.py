@@ -13,6 +13,7 @@ from engines.deviantart import search_deviantart
 from engines.google_images import google_image_search
 from concurrent.futures import ThreadPoolExecutor
 import logging
+import time
 
 def parallel_scrape(scrape_func, links, engine, max_workers=10):
     def wrapper(link):
@@ -205,31 +206,54 @@ class SearchBot:
         return total_tokens
     
     def main(self, query):
-        # 1. Get subquestions, entities, tags to determine engine and what to search for 
+        latency = {}
+        start_time = time.perf_counter()
+
+        # 1. Decompose prompt
+        t0 = time.perf_counter()
         result = self._get_subquestions(query)
+        latency["decompose_prompt"] = time.perf_counter() - t0
+
         sub_questions = result["sub_queries"]
         entity_dic = result["entity_dic"]
         tags = result["tags"]
 
-        # 2. Find engines to use
+        # 2. Select engines
+        t0 = time.perf_counter()
         engines = self._find_engines(tags)
+        latency["select_engines"] = time.perf_counter() - t0
 
-        # 3. Get what to search for from entities 
+        # 3. Get entities
+        t0 = time.perf_counter()
         top_entity_names = self._get_top_entity_names(entity_dic, top_n=2)
+        latency["get_entities"] = time.perf_counter() - t0
 
-        # 4. Gather search jobs and then run searching and scraping in parallel
+        # 4. Run search + scrape
+        t0 = time.perf_counter()
         jobs = self._gather_search_jobs(engines, sub_questions, top_entity_names)
         info = self._run_search_jobs(jobs)
+        latency["search_and_scrape"] = time.perf_counter() - t0
 
-        # 5. Get images from entities
-        image_urls = self._get_images(entity_dic)
+        # 5. Get images
+        t0 = time.perf_counter()
+        image_urls = self._get_images(top_entity_names)
+        latency["get_images"] = time.perf_counter() - t0
 
-        # 6. Return final result and count tokens
+        # 6. Count tokens
+        t0 = time.perf_counter()
+        tokens = self._check_tokens(info)
+        latency["token_check"] = time.perf_counter() - t0
+
+        # Total time
+        latency["total"] = time.perf_counter() - start_time
+
+        # Final result
         final_result = {
             "query": query,
             "info": info,
             "images": image_urls, 
-            "tokens": self._check_tokens(info)
+            "tokens": tokens,
+            "latency": latency
         }
 
         return final_result
