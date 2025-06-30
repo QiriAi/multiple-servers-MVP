@@ -25,7 +25,7 @@ def extract_text(elements):
 def search_deviantart(query, page=1):
     url = SEARCH_URL.format(urllib.parse.urlencode({'q': query}))
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=10)
+        resp = requests.get(url, headers=HEADERS, timeout=20)
         if resp.status_code != 200:
             print("❌ DeviantArt request failed:", resp.status_code)
             return []
