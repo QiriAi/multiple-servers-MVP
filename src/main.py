@@ -275,17 +275,17 @@ class SearchBot:
             "latency": latency
         }
 
-        #return final_result
+        return final_result
 
         #For non server testing
         # Generate a timestamped filename
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"output/context_and_citation_{timestamp}.json"
+        # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        # filename = f"output/context_and_citation_{timestamp}.json"
 
-        # Save the file
-        with open(filename, "w", encoding="utf-8") as f:
-            json.dump(final_result, f, indent=2)
-        return engines, tags, entity_dic, sub_questions
+        # # Save the file
+        # with open(filename, "w", encoding="utf-8") as f:
+        #     json.dump(final_result, f, indent=2)
+        # return engines, tags, entity_dic, sub_questions
 
 # Test the bot
 if __name__ == "__main__":
