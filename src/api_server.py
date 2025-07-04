@@ -29,6 +29,9 @@ def get_api_key(api_key: str = Security(api_key_scheme)) -> str:
             status_code=HTTP_401_UNAUTHORIZED,
             detail="Invalid or missing API Key",
         )
+@app.get("/")
+def health_check():
+    return {"status": "ok"}
 
 @app.post("/search")
 def search(request: QueryRequest,
