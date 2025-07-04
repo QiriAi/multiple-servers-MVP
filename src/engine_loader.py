@@ -11,9 +11,11 @@ from engines.hackernews import search_hackernews
 from engines.huggingface import search_huggingface
 from engines.openstreetmap import search_osm
 from engines.astrophysics_data_system import search_ads
+from engines.jina_search import jina_search
 
 # Map engine names to their search functions
 SEARCH_ENGINES = {
+    "jina_search": jina_search,
     "google": get_google_urls,
     "reddit": search_reddit,
     "wikipedia": search_wikipedia,

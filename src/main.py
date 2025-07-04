@@ -8,7 +8,6 @@ from src.llm_prompt_analyser import decompose_prompt
 import google.generativeai as genai
 import json
 from src.jina_scraper import jina
-from engines.google import get_google_urls
 from engines.deviantart import search_deviantart
 from engines.google_images import google_image_search
 from concurrent.futures import ThreadPoolExecutor
@@ -36,7 +35,7 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 class SearchBot:
-    ENGINES_USE_SUBQUESTIONS = {"google", "wikipedia"}
+    ENGINES_USE_SUBQUESTIONS = {"google", "wikipedia", "jina_search"}
     ENGINES_USE_ENTITIES = {"arxiv", "astrophysics_data_system", "goodreads", "hackernews","imdb", "reddit"}
     ENGINES_USE_ENTITIES_NO_SCRAPING = {"github", "huggingface", "openstreetmap", "steam"}
     IMAGE_ENGINES = {"deviantart", "google_images"}
@@ -110,7 +109,7 @@ class SearchBot:
         selected_engines = rank_engines(tags=tags)
 
         # must always include our baseline engines
-        selected_engines += ["google"] 
+        selected_engines += ["google", "jina_search"] 
         return selected_engines
         
     def _gather_search_jobs(self, selected_engines, sub_questions, top_entity_names):
@@ -145,6 +144,25 @@ class SearchBot:
                     "citation": "NO_LINK_SINCE_NO_SCRAPING",
                     "engine": engine
                 } for i in inputs]
+            
+            # Jina Search (special case, no scraping, returns JSON list)
+            if engine == "jina_search":
+                logging.info(f"Running Jina Search on inputs {inputs}")
+                all_results = []
+                for i in inputs:
+                    response = safe_search(search_func, i)
+                    if response.status_code == 200:
+                        data = response.json().get("data", [])
+                        for result in data[:3]: #limit to 3 results
+                            content = result.get("content", "")
+                            if not content:
+                                continue
+                            all_results.append({
+                                "context": content,
+                                "citation": result.get("url", ""),
+                                "engine": "Jina Search"
+                            })
+                return all_results
 
             logging.info(f"Running searching on {engine} with inputs {inputs}")
             # Step 1: Search one-by-one (simplified)
@@ -257,17 +275,17 @@ class SearchBot:
             "latency": latency
         }
 
-        return final_result
+        #return final_result
 
-        # For non server testing
-        # # Generate a timestamped filename
-        # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        # filename = f"output/context_and_citation_{timestamp}.json"
+        #For non server testing
+        # Generate a timestamped filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"output/context_and_citation_{timestamp}.json"
 
-        # # Save the file
-        # with open(filename, "w", encoding="utf-8") as f:
-        #     json.dump(final_result, f, indent=2)
-        # return engines, tags, entity_dic, sub_questions
+        # Save the file
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(final_result, f, indent=2)
+        return engines, tags, entity_dic, sub_questions
 
 # Test the bot
 if __name__ == "__main__":
